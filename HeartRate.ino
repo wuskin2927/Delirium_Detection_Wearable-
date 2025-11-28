@@ -38,9 +38,7 @@ static double hr_thresholdIR = 0;           // Adaptive IR threshold
 // --- Last values ---
 static double hr_lastBPM = 0;               // Last computed BPM
 static double hr_lastSpO2 = 0;              // Last SpO2 %
-static double hr_lastSDNN = 0;              // HRV SDNN
-static double hr_lastRMSSD = 0;             // HRV RMSSD
-static double hr_lastPNN50 = 0;             // HRV pNN50
+
 
 // --- Functions ---
 void hr_init() {
@@ -107,45 +105,6 @@ static bool hr_detectBeat(double sample, double motion) {
   return false;
 }
 
-// Calculate HRV metrics from RR intervals
-static void hr_calculateHRV() {
-  if (hr_rrCount < 3) return; // not enough data
-
-  int start = hr_rrCount > 20 ? hr_rrCount - 20 : 0; // last 20 beats
-  int n = hr_rrCount - start;
-
-  // SDNN (standard deviation of RR)
-  double mean = 0;
-  for (int i = start; i < hr_rrCount; i++) mean += hr_rrIntervals[i];
-  mean /= n;
-
-  double sdnn = 0;
-  for (int i = start; i < hr_rrCount; i++) {
-    double d = hr_rrIntervals[i] - mean;
-    sdnn += d * d;
-  }
-  sdnn = sqrt(sdnn / n);
-
-  // RMSSD (difference between adjacent intervals)
-  double sumSq = 0;
-  for (int i = start+1; i < hr_rrCount; i++) {
-    double d = hr_rrIntervals[i] - hr_rrIntervals[i - 1];
-    sumSq += d * d;
-  }
-  double rmssd = sqrt(sumSq / (n-1));
-
-  // pNN50 (% of RR differences > 50 ms)
-  int count50 = 0;
-  for (int i = start+1; i < hr_rrCount; i++) {
-    if (fabs(hr_rrIntervals[i] - hr_rrIntervals[i-1]) > 50) count50++;
-  }
-  double pnn50 = 100.0 * count50 / (n-1);
-
-  hr_lastSDNN = sdnn;
-  hr_lastRMSSD = rmssd;
-  hr_lastPNN50 = pnn50;
-}
-
 // Calculate SpO2 using ratio of ratios
 static void hr_calculateSpO2() {
   double redMax = hr_redBuffer[0], redMin = hr_redBuffer[0], redMean = 0;
@@ -186,9 +145,7 @@ static void hr_calculateSpO2() {
 // --- Public getters ---
 double hr_getLastBPM() { return hr_lastBPM; }
 double hr_getSpO2() { return hr_lastSpO2; }
-String hr_getHRVString() {
-  return "HRV SDNN: " + String(hr_lastSDNN, 2) + " ms, RMSSD: " + String(hr_lastRMSSD, 2) + " ms, pNN50: " + String(hr_lastPNN50, 2) + " %";
-}
+
 
 // --- Main update function ---
 void hr_update() {
@@ -232,11 +189,7 @@ void hr_update() {
     }
     hr_lastBeatTime = now;
 
-    // Recalculate HRV every 5 beats and send via BLE
-    if(hr_rrCount >= 5 && hr_rrCount % 5 == 0){
-      hr_calculateHRV();
-      ble_send(hr_getHRVString() + "\n");
-    }
+    
   }
 
   // Save samples for SpO2 calculation
