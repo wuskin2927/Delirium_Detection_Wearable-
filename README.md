@@ -7,10 +7,10 @@ Wearable detects hospital induced delirium
   hypoactivity during sleep
 - Outputs data and alerts to another device via bluetooth
 
-![alt text](wearable_breakdown.JPEG)
-![alt text](wearable_on_wrist.JPEG)
-![alt text](wearable_with_sensor.JPEG)
-![alt text](/main/wearable_with_sensor.JPEG)
+<img src="https://github.com/user-attachments/assets/498c9962-c268-4598-ac61-8c4b27d3e921" width="280">
+<img src="https://github.com/user-attachments/assets/60322051-1faf-402c-ad6d-b3ffcf89188a" width="280">
+<img src="https://github.com/user-attachments/assets/e14d5cb6-344f-4d48-97f4-dd609696ff68" width="280">
+
 
 Hardware 
 - Arduino Nano BLE 33 Rev2 (Built in BLE and IMU)
