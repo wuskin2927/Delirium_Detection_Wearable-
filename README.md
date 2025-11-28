@@ -10,6 +10,7 @@ Wearable detects hospital induced delirium
 ![alt text](wearable_breakdown.JPEG)
 ![alt text](wearable_on_wrist.JPEG)
 ![alt text](wearable_with_sensor.JPEG)
+![alt text](/images/wearable_with_sensor.JPEG)
 
 Hardware 
 - Arduino Nano BLE 33 Rev2 (Built in BLE and IMU)
